@@ -35,7 +35,8 @@ end
 
 local function assert_same_message(expected, actual)
 	for _, k in ipairs {"id", "subject", "body"} do
-		assert(expected[k] == actual[k], ("%q field mismatch in mail content: expected %q, got %q"):format(k, expected[k], actual[k]))
+		assert(expected[k] == actual[k],
+			("%q field mismatch in mail content: expected %q, got %q"):format(k, expected[k], actual[k]))
 	end
 end
 
