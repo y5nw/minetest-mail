@@ -33,11 +33,26 @@ local function assert_inbox_count(player_name, count)
     assert(player_received == count, ("incorrect receive count: %d expected, got %d"):format(count, player_received))
 end
 
-local function assert_send(expected_success, ...)
-	local success, err = mail.send(...)
+local function assert_received(expected, actual)
+	for _, k in ipairs {"id", "subject", "body"} do
+		assert(expected[k] == actual[k], ("%q field mismatch in mail content"):format(k))
+	end
+end
+
+local function assert_send(expected_success, content)
+	local id = mail.new_uuid()
+	content.id = id
+	local success, err = mail.send(content)
 	if expected_success then
 		assert(success, ("expected mail to be sent, got error message: %s"):format(err))
 		assert(not err, ("unexpected message after sending mail: %s"):format(err))
+
+		local sent = assert(mail.get_message(content.from, id), "failed to find message that was successfully sent")
+		assert_same_message(content, sent)
+		if string.match(content.to, "^player%d+$") then
+			local received = assert(mail.get_message(content.from, id), "failed to find message that was successfully delivered")
+			assert_same_message(content, received)
+		end
 	else
 		assert(not success, "expected mail to be rejected, mail was sent")
 		assert(type(err) == "string", ("expected error message, got datum of type %s"):format(type(err)))
@@ -74,8 +89,7 @@ mtt.register("send mail", function(callback)
 
     -- https://github.com/mt-mods/mail/issues/122
     assert_send(true, {from = "player1", to = "player2", subject = "topic", body = "hello"})
-    assert_send(true, {id = "122-2", from = "player2", to = "player2", subject = "topic", body = "blah"})
-    assert(mail.get_message("player2", "122-2").body == "blah")
+    assert_send(true, {from = "player2", to = "player2", subject = "topic", body = "blah"})
 
     callback()
 end)
