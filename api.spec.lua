@@ -72,5 +72,10 @@ mtt.register("send mail", function(callback)
     assert_inbox_count("player1", 2)
     assert(sent_count == 3)
 
+    -- https://github.com/mt-mods/mail/issues/122
+    assert_send(true, {from = "player1", to = "player2", subject = "topic", body = "hello"})
+    assert_send(true, {id = "122-2", from = "player1", to = "player2", subject = "topic", body = "blah"})
+    assert(mail.get_message("player2", "122-2").body == "blah")
+
     callback()
 end)
