@@ -74,7 +74,7 @@ mtt.register("send mail", function(callback)
 
     -- https://github.com/mt-mods/mail/issues/122
     assert_send(true, {from = "player1", to = "player2", subject = "topic", body = "hello"})
-    assert_send(true, {id = "122-2", from = "player1", to = "player2", subject = "topic", body = "blah"})
+    assert_send(true, {id = "122-2", from = "player2", to = "player2", subject = "topic", body = "blah"})
     assert(mail.get_message("player2", "122-2").body == "blah")
 
     callback()
