@@ -33,9 +33,9 @@ local function assert_inbox_count(player_name, count)
     assert(player_received == count, ("incorrect receive count: %d expected, got %d"):format(count, player_received))
 end
 
-local function assert_received(expected, actual)
+local function assert_same_message(expected, actual)
 	for _, k in ipairs {"id", "subject", "body"} do
-		assert(expected[k] == actual[k], ("%q field mismatch in mail content"):format(k))
+		assert(expected[k] == actual[k], ("%q field mismatch in mail content: expected %q, got %q"):format(k, expected[k], actual[k]))
 	end
 end
 
